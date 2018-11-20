@@ -39,7 +39,7 @@ if not args.new_model:
 	
 num_epochs = args.num_epochs
 if num_epochs !=0:
-	data_loc = os.path.join('data', args.data_file)
+	data_loc = args.data_file
 	if args.save_name == '0':
 		save_name = args.model_name
 	else:
