@@ -1,0 +1,9 @@
+[submodule "data/dd_spells"]
+	path = data/dd_spells
+	url = https://github.com/janelleshane/dnd_spells
+[submodule "data/dd_bios"]
+	path = data/dd_bios
+	url = https://github.com/janelleshane/DnD_bios
+[submodule "data/ice_cream"]
+	path = data/ice_cream
+	url = https://github.com/janelleshane/ice-cream
