@@ -1,17 +1,20 @@
 # RNN-gui
+
 A minimal python GUI to facilitate textgenrnn training and sampling.
+
+Ice cream flavor and DnD datasets cloned from https://github.com/janelleshane.
 
 For more extensive documentation, see textgenrnn: https://github.com/minimaxir/textgenrnn
 
 ## Installing dependencies
 
 (Tested on Linux)
-`sudo apt-get install python3-pip git`
-`pip3 install tensorflow`
-`pip3 install textgenrnn`
-`git clone --recursive https://github.com/jwmatthys/rnn-gui`
-`cd rnn-gui`
-`python3 rnn-gui`
+```sudo apt-get install python3-pip python3-tk git
+pip3 install tensorflow
+pip3 install textgenrnn
+git clone --recursive https://github.com/jwmatthys/rnn-gui
+cd rnn-gui
+python3 rnn-gui```
 
 ## Running the GUI
 
