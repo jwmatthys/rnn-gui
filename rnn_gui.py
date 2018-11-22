@@ -35,9 +35,9 @@ class RNNGui:
     __thisMaxGenLengthLabel = Label(__root, text="Max gen length")
     __thisMaxGenLength = Entry(__root)
     __thisMaxGenLength.insert(0, 1000)
-    __thisMaxWordsLabel = Label(__root, text="Max Vocab")
+    __thisMaxWordsLabel = Label(__root, text="Max vocab (word level)")
     __thisMaxWordsEntry = Entry(__root)
-    __thisMaxWordsEntry.insert(0, 20000)
+    __thisMaxWordsEntry.insert(0, 2000)
     __thisPrefixLabel = Label(__root, text="Optional prefix")
     __thisPrefixEntry = Entry(__root)
     __thisNumGenLabel = Label(__root, text="Num to generate")
@@ -188,14 +188,17 @@ class RNNGui:
         for f in files:
             shutil.copy(f, save_dir)
         self.__thisGenerateButton.config(state=NORMAL)
+        self.__thisNewModel = False
+        print ("*** Training complete ***\n")
 
     def __goGenerate(self):
-        print ("\n*************************\n*** Generating %s samples\n*** Model: \'%s\'\n*** Temperature %0.2f\n*************************\n" %
-               (self.__thisNumGenEntry.get(), self.__thisModelSaveName.get(), self.__thisTemperature.get()))
 
         if self.__thisModel:
+            print ("\n*************************\n*** Generating %s samples\n*** Model: \'%s\'\n*** Temperature %0.2f\n*************************\n" %
+                   (self.__thisNumGenEntry.get(), self.__thisModelSaveName.get(), self.__thisTemperature.get()))
             self.__thisModel.generate(n=int(self.__thisNumGenEntry.get()), temperature=self.__thisTemperature.get(
             ), prefix=self.__thisPrefixEntry.get(), max_gen_length=int(self.__thisMaxGenLength.get()))
+            print ("***\n")
 
     def __quitApplication(self):
         self.__root.destroy()

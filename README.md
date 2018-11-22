@@ -16,6 +16,8 @@ pip3 install textgenrnn
 git clone --recursive https://github.com/jwmatthys/rnn-gui
 ```
 
+(See https://github.com/minimaxir/textgenrnn for information about installing GPU-enabled textgenrnn.)
+
 ## Running the GUI
 
 RNN-gui and textgenrnn require Python3.
