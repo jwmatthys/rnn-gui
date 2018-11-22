@@ -173,6 +173,10 @@ class RNNGui:
             # TODO: disable training button if no __setDatasetPath
             return
 
+        if self.__thisWordLevel.get() and self.__thisLargeText.get():
+            print ('Using word-level mode with large text.')
+            self.__thisModel.train_from_largetext_file(self.__thisDatasetPath, num_epochs=self.__thisNumEpochs.get(
+            ), new_model=True, word_level=True, max_words=int(self.__thisMaxWordsEntry.get()))
         if self.__thisWordLevel.get():
             print('Using word-level mode.')
             self.__thisModel.train_from_file(self.__thisDatasetPath, num_epochs=self.__thisNumEpochs.get(
