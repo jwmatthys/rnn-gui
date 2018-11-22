@@ -1,5 +1,5 @@
 import shutil, os
-import argparse 
+import argparse
 from textgenrnn import textgenrnn
 
 # --------------------------------------------------------------------------------------
