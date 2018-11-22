@@ -177,7 +177,7 @@ class RNNGui:
             print('Using word-level mode.')
             self.__thisModel.train_from_file(self.__thisDatasetPath, num_epochs=self.__thisNumEpochs.get(
             ), new_model=True, word_level=True, max_words=int(self.__thisMaxWordsEntry.get()))
-        elif self.__thisLargeText == True:
+        elif self.__thisLargeText.get():
             print('Using large text mode.')
             self.__thisModel.train_from_largetext_file(
                 self.__thisDatasetPath, num_epochs=self.__thisNumEpochs.get(), new_model=self.__thisNewModel)
