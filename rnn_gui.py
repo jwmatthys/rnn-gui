@@ -7,19 +7,13 @@ import shutil
 import threading
 from textgenrnn import textgenrnn
 
-exit_thread = False
-exit_success = False
-
 
 class RNNGui:
 
     __root = Tk()
     __thisModel = textgenrnn()
     __thisNewModel = True
-
-    __thisWidth = 400
-    __thisHeight = 600
-    __thisDatasetPath = ""
+    __thisDatasetPath = None
     __thisWordLevel = BooleanVar()
     __thisLargeText = BooleanVar()
 
@@ -43,7 +37,7 @@ class RNNGui:
     __thisMaxGenLength.insert(0, 1000)
     __thisMaxWordsLabel = Label(__root, text="Max Vocab")
     __thisMaxWordsEntry = Entry(__root)
-    __thisMaxWordsEntry.insert(0, 2000)
+    __thisMaxWordsEntry.insert(0, 20000)
     __thisPrefixLabel = Label(__root, text="Optional prefix")
     __thisPrefixEntry = Entry(__root)
     __thisNumGenLabel = Label(__root, text="Num to generate")
@@ -52,8 +46,8 @@ class RNNGui:
     __thisTrainingLabel = Label(__root, text="\nTRAINING\n")
     __thisSamplingLabel = Label(__root, text="\nSAMPLING\n")
     # default window width and height
-    __thisWidth = 640
-    __thisHeight = 800
+    __thisWidth = 360
+    __thisHeight = 600
 
     def __init__(self, **kwargs):
 
@@ -76,14 +70,11 @@ class RNNGui:
         # Set the window text
         self.__root.title("RNN gui")
 
-        # Center the window
+        # Place window on right side of screen
         screenWidth = self.__root.winfo_screenwidth()
         screenHeight = self.__root.winfo_screenheight()
 
-        # For left-alling
         left = screenWidth - self.__thisWidth
-
-        # For right-allign
         top = (screenHeight / 2) - (self.__thisHeight / 2)
 
         # For top and bottom
@@ -99,22 +90,23 @@ class RNNGui:
             self.__root, text="Choose dataset", bg="pink", command=self.__setDatasetPath)
         self.__thisTrainButton = Button(
             self.__root, text="Train", bg="pink", command=self.__goTrain)
+        self.__thisTrainButton.config(state=DISABLED)
         self.__thisGenerateButton = Button(
-            self.__root, text="Generate", bg="pink", command=self.__goGenerate)
+            self.__root, text="Generate", bg="pink", command=self.__goGenerate, state=DISABLED)
 
         # To make the textarea auto resizable
         self.__thisTrainingLabel.grid(row=0, columnspan=2)
         self.__thisDatasetButton.grid(row=1, columnspan=2, pady=(0, 10))
         self.__thisLoadModelButton.grid(row=2, padx=(10, 10))
         self.__thisNewModelButton.grid(row=2, column=1, padx=(10, 10))
-        self.__thisLargeTextCheckbox.grid(row=4)
-        self.__thisWordLevelCheckbox.grid(row=5)
-        self.__thisModelSaveNameLabel.grid(row=6)
-        self.__thisModelSaveName.grid(row=6, column=1)
-        self.__thisEpochLabel.grid(row=7)
-        self.__thisNumEpochs.grid(row=7, column=1)
-        self.__thisMaxWordsLabel.grid(row=8)
-        self.__thisMaxWordsEntry.grid(row=8, column=1)
+        self.__thisModelSaveNameLabel.grid(row=4)
+        self.__thisModelSaveName.grid(row=4, column=1)
+        self.__thisLargeTextCheckbox.grid(row=5)
+        self.__thisWordLevelCheckbox.grid(row=6)
+        self.__thisMaxWordsLabel.grid(row=7)
+        self.__thisMaxWordsEntry.grid(row=7, column=1)
+        self.__thisEpochLabel.grid(row=8)
+        self.__thisNumEpochs.grid(row=8, column=1)
         self.__thisTrainButton.grid(row=9, columnspan=2, pady=(10, 10))
 
         self.__thisSamplingLabel.grid(row=10, columnspan=2)
@@ -129,21 +121,20 @@ class RNNGui:
         self.__thisGenerateButton.grid(row=15, columnspan=2, pady=(10, 10))
 
     def __setDatasetPath(self):
-        self.__thisDatasetPath = askopenfilename(defaultextension=".txt",
+        self.__thisDatasetPath = askopenfilename(initialdir="data", defaultextension=".txt",
                                                  filetypes=[("All Files", "*.*"),
                                                             ("Text Documents",
                                                              "*.txt"),
                                                             ("CSV Text Documents", "*.csv")])
         if self.__thisDatasetPath == "":
-
-            # no file to open
             self.__thisDatasetPath = None
-        else:
-            self.__root.title(os.path.basename(
-                self.__thisDatasetPath) + " - RNNGui")
+        if self.__thisDatasetPath:
+            basename = os.path.basename(self.__thisDatasetPath)
+            self.__root.title(basename + " - RNNGui")
+            self.__thisTrainButton.config(state=NORMAL)
             if self.__thisModelSaveName.get() == "" and self.__thisNewModel:
-                self.__thisModelSaveName.insert(0, os.path.basename(
-                    self.__thisDatasetPath))
+                self.__thisModelSaveName.insert(
+                    0, os.path.splitext(basename)[0])
 
     def __loadModel(self):
         testPath = askdirectory(
@@ -159,10 +150,13 @@ class RNNGui:
             config_loc = os.path.join(load_loc, 'textgenrnn_config.json')
             self.__thisModel = textgenrnn(
                 weights_path=weights_loc, vocab_path=vocab_loc, config_path=config_loc)
+            self.__thisGenerateButton.config(state=NORMAL)
 
     def __newModel(self):
         self.__thisNewModel = True
         self.__thisModel = textgenrnn()
+        self.__thisModelSaveName.delete(0, 'end')
+        self.__thisModelSaveName.insert(0, '')
 
     def __goTrain(self):
         # save results before training in case user aborts
@@ -182,7 +176,7 @@ class RNNGui:
         if self.__thisWordLevel.get():
             print('Using word-level mode.')
             self.__thisModel.train_from_file(self.__thisDatasetPath, num_epochs=self.__thisNumEpochs.get(
-            ), new_model=True, word_level=True, max_words=int(self.__thisMaxWords.get()))
+            ), new_model=True, word_level=True, max_words=int(self.__thisMaxWordsEntry.get()))
         elif self.__thisLargeText == True:
             print('Using large text mode.')
             self.__thisModel.train_from_largetext_file(
@@ -191,9 +185,13 @@ class RNNGui:
             print('Beginning training.')
             self.__thisModel.train_from_file(
                 self.__thisDatasetPath, num_epochs=self.__thisNumEpochs.get(), new_model=self.__thisNewModel)
+        for f in files:
+            shutil.copy(f, save_dir)
+        self.__thisGenerateButton.config(state=NORMAL)
 
     def __goGenerate(self):
-        print ("Generating %d samples\n\nTemperature %d" % (int(self.__thisNumGenEntry.get(), self.__thisTemperature.get())))
+        print ("\n*************************\n*** Generating %s samples\n*** Model: \'%s\'\n*** Temperature %0.2f\n*************************\n" %
+               (self.__thisNumGenEntry.get(), self.__thisModelSaveName.get(), self.__thisTemperature.get()))
 
         if self.__thisModel:
             self.__thisModel.generate(n=int(self.__thisNumGenEntry.get()), temperature=self.__thisTemperature.get(
@@ -212,5 +210,5 @@ class RNNGui:
 
 
 # Run main application
-rnngui=RNNGui(width=360, height=600)
+rnngui = RNNGui(width=360, height=540)
 rnngui.run()

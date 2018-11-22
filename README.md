@@ -1,57 +1,49 @@
-# textgenrnn-wrapper
-A python wrapper for textgenrnn to manage saved files
+# RNN-gui
+A minimal python GUI to facilitate textgenrnn training and sampling.
 
 For more extensive documentation, see textgenrnn: https://github.com/minimaxir/textgenrnn
 
+## Installing dependencies
+
+(Tested on Linux)
+`sudo apt-get install python3-pip git`
+`pip3 install tensorflow`
+`pip3 install textgenrnn`
+`git clone --recursive https://github.com/jwmatthys/rnn-gui`
+`cd rnn-gui`
+`python3 rnn-gui`
+
+## Running the GUI
+
+RNN-gui and textgenrnn require Python3.
+
+Open a terminal and run
+
+`python3 rnn_gui.py`
+
+Outputs will appear in the terminal.
+
 ## Training a brand new model
 
-To train a new model from the text file in `'data/ice-cream/IceCream_sorted.txt'` and save in weights/ice_cream:
-
-`python textgenrnn_save_wrapper.py --model_name=ice_cream --new_model --num_epochs=1 --data_file='ice-cream/IceCream_sorted.txt'`
+Click "Choose dataset" and select a dataset file (usually a .txt or .csv file).
+Click "Start with new model".
+(optional) Choose a different name for your new model by changing the text in the "Save model as" textbox.
+Choose the number of Epochs to train. One epoch is one full run through the dataset.
 
 ## Sampling from an already-trained model
 
-To sample from the model saved in weights/ice_cream:
+To sample from the model you just trained, adjust the sampling options and click Generate.
+If the Generate button is disabled, you do not have a currently loaded model.
 
-`python textgenrnn_save_wrapper.py --model_name=ice_cream`
-`python textgenrnn_save_wrapper.py --model_name=ice_cream --n_gen=10 --temperature=0.2`
-`python textgenrnn_save_wrapper.py --model_name=ice_cream --n_gen=10 --temperature=0.2 --prefix='Chocolate'`
+To load a model, click "Load existing model" and open the directory that contains a trained model.
 
 ## Continue training an already-trained model
 
-Load a model from ice_cream, train on the text file in `'data/ice-cream/IceCream_sorted.txt'` and overwrite the model in ice_cream
-
-`python textgenrnn_save_wrapper.py --model_name=ice_cream --num_epochs=1 --data_file='ice-cream/IceCream_sorted.txt'`
-
-Load a model from ice_cream, train on the text file in 'data/ice-cream/IceCream_sorted.txt' and save in weights/ice_cream2:
-
-`python textgenrnn_save_wrapper.py --model_name=ice_cream --num_epochs=1 --data_file='ice-cream/IceCream_sorted.txt' --save_name=ice_cream2`
+Click "Load existing model" and open the directory that contains a trained model.
+Click "Choose dataset" to locate your dataset. You may continue on your original dataset, or transfer learning by selecting a different dataset to train your model on.
 
 
-## Transfer learning: 
+## Word level and Large text mode:
 
-Load a model from ice_cream, train on the text file in `'data/superheroes/superheroes.txt'` and save in weights/ice_cream_heroes:
-
-`python textgenrnn_save_wrapper.py --model_name=ice_cream --num_epochs=1 --data_file='superheroes/superheroes.txt' --save_name=ice_cream_heroes`
-
-## Word level:
-
-train a word-level model and save in weights/ice_cream_word:
-
-`python textgenrnn_save_wrapper.py --model_name=ice_cream_word --new_model --word_level --num_epochs=1 --data_file='ice-cream/IceCream_sorted.txt'`
-
-`python textgenrnn_save_wrapper.py --model_name=ice_cream_word --new_model --word_level --max_words=10 --num_epochs=1 --data_file='ice-cream/IceCream_sorted.txt'`
-
-Load from file:
-
-`python textgenrnn_save_wrapper.py --model_name=ice_cream_word --temperature=1.0`
-
-## Large text mode: 
-
-train:
-
-`python textgenrnn_save_wrapper.py --model_name=cocktails_largetext --large_text --new_model --num_epochs=1 --data_file='cocktails/cocktails.txt'`
-
-Load from file:
-
-`python textgenrnn_save_wrapper.py --model_name=cocktails_largetext --temperature=0.5 --n_gen=1 --max_gen_length=1000`
+If you are training a large text or want to train at the word level instead of the character level, check these boxes.
+The Max Vocab setting is only used if you have enabled word level training.
