@@ -9,12 +9,14 @@ For more extensive documentation, see textgenrnn: https://github.com/minimaxir/t
 ## Installing dependencies
 
 (Tested on Linux)
-```sudo apt-get install python3-pip python3-tk git
+```
+sudo apt-get install python3-pip python3-tk git
 pip3 install tensorflow
 pip3 install textgenrnn
 git clone --recursive https://github.com/jwmatthys/rnn-gui
 cd rnn-gui
-python3 rnn-gui```
+python3 rnn-gui
+```
 
 ## Running the GUI
 
