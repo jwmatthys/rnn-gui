@@ -24,7 +24,7 @@ class RNNGui:
     __thisModelSaveNameLabel = Label(__root, text="Save model as")
     __thisModelSaveName = Entry(__root)
     __thisTrainSizeLabel = Label(__root, text="Train size")
-    __thisTrainSize = Scale(__root, from_=0, to=1,
+    __thisTrainSize = Scale(__root, from_=0.5, to=1,
                             resolution=0.01, orient=HORIZONTAL)
     __thisTrainSize.set(1.0)
     __thisLargeTextCheckbox.deselect()
