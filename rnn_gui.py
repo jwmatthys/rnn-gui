@@ -23,6 +23,10 @@ class RNNGui:
         __root, text="Word level", onvalue=True, offvalue=False, variable=__thisWordLevel)
     __thisModelSaveNameLabel = Label(__root, text="Save model as")
     __thisModelSaveName = Entry(__root)
+    __thisTrainSizeLabel = Label(__root, text="Train size")
+    __thisTrainSize = Scale(__root, from_=0, to=1,
+                            resolution=0.01, orient=HORIZONTAL)
+    __thisTrainSize.set(1.0)
     __thisLargeTextCheckbox.deselect()
     __thisWordLevelCheckbox.deselect()
     __thisEpochLabel = Label(__root, text="Epochs to train")
@@ -105,20 +109,22 @@ class RNNGui:
         self.__thisWordLevelCheckbox.grid(row=6)
         self.__thisMaxWordsLabel.grid(row=7)
         self.__thisMaxWordsEntry.grid(row=7, column=1)
-        self.__thisEpochLabel.grid(row=8)
-        self.__thisNumEpochs.grid(row=8, column=1)
-        self.__thisTrainButton.grid(row=9, columnspan=2, pady=(10, 10))
+        self.__thisTrainSizeLabel.grid(row=8)
+        self.__thisTrainSize.grid(row=8, column=1)
+        self.__thisEpochLabel.grid(row=9)
+        self.__thisNumEpochs.grid(row=9, column=1)
+        self.__thisTrainButton.grid(row=10, columnspan=2, pady=(10, 10))
 
-        self.__thisSamplingLabel.grid(row=10, columnspan=2)
-        self.__thisNumGenLabel.grid(row=11)
-        self.__thisNumGenEntry.grid(row=11, column=1)
-        self.__thisMaxGenLengthLabel.grid(row=12)
-        self.__thisMaxGenLength.grid(row=12, column=1)
-        self.__thisPrefixLabel.grid(row=13)
-        self.__thisPrefixEntry.grid(row=13, column=1)
-        self.__thisTemperatureLabel.grid(row=14)
-        self.__thisTemperature.grid(row=14, column=1)
-        self.__thisGenerateButton.grid(row=15, columnspan=2, pady=(10, 10))
+        self.__thisSamplingLabel.grid(row=11, columnspan=2)
+        self.__thisNumGenLabel.grid(row=12)
+        self.__thisNumGenEntry.grid(row=12, column=1)
+        self.__thisMaxGenLengthLabel.grid(row=13)
+        self.__thisMaxGenLength.grid(row=13, column=1)
+        self.__thisPrefixLabel.grid(row=14)
+        self.__thisPrefixEntry.grid(row=14, column=1)
+        self.__thisTemperatureLabel.grid(row=15)
+        self.__thisTemperature.grid(row=15, column=1)
+        self.__thisGenerateButton.grid(row=16, columnspan=2, pady=(10, 10))
 
     def __setDatasetPath(self):
         self.__thisDatasetPath = askopenfilename(initialdir="data", defaultextension=".txt",
@@ -176,19 +182,19 @@ class RNNGui:
         if self.__thisWordLevel.get() and self.__thisLargeText.get():
             print ('Using word-level mode with large text.')
             self.__thisModel.train_from_largetext_file(self.__thisDatasetPath, num_epochs=self.__thisNumEpochs.get(
-            ), new_model=self.__thisNewModel, word_level=True, max_words=int(self.__thisMaxWordsEntry.get()))
+            ), new_model=self.__thisNewModel, word_level=True, max_words=int(self.__thisMaxWordsEntry.get()), train_size=self.__thisTrainSize.get())
         elif self.__thisWordLevel.get():
             print('Using word-level mode.')
             self.__thisModel.train_from_file(self.__thisDatasetPath, num_epochs=self.__thisNumEpochs.get(
-            ), new_model=self.__thisNewModel, word_level=True, max_words=int(self.__thisMaxWordsEntry.get()))
+            ), new_model=self.__thisNewModel, word_level=True, max_words=int(self.__thisMaxWordsEntry.get()), train_size=self.__thisTrainSize.get())
         elif self.__thisLargeText.get():
             print('Using large text mode.')
             self.__thisModel.train_from_largetext_file(
-                self.__thisDatasetPath, num_epochs=self.__thisNumEpochs.get(), new_model=self.__thisNewModel)
+                self.__thisDatasetPath, num_epochs=self.__thisNumEpochs.get(), new_model=self.__thisNewModel, train_size=self.__thisTrainSize.get())
         else:
             print('Beginning training.')
             self.__thisModel.train_from_file(
-                self.__thisDatasetPath, num_epochs=self.__thisNumEpochs.get(), new_model=self.__thisNewModel)
+                self.__thisDatasetPath, num_epochs=self.__thisNumEpochs.get(), new_model=self.__thisNewModel, train_size=self.__thisTrainSize.get())
         for f in files:
             shutil.copy(f, save_dir)
         self.__thisGenerateButton.config(state=NORMAL)
@@ -217,5 +223,5 @@ class RNNGui:
 
 
 # Run main application
-rnngui = RNNGui(width=360, height=540)
+rnngui = RNNGui(width=360, height=570)
 rnngui.run()

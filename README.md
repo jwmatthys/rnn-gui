@@ -39,6 +39,8 @@ Click "Start with new model".
 
 (optional) Choose a different name for your new model by changing the text in the "Save model as" textbox.
 
+The "Train size" slider allows you to train on a portion of the full text rather than the entire file. The remaining portion of the text will be used for validation.
+
 Choose the number of Epochs to train. One epoch is one full run through the dataset.
 
 ## Sampling from an already-trained model
@@ -58,7 +60,7 @@ Click "Choose dataset" to locate your dataset. You may continue on your original
 
 ## Word level and Large text mode:
 
-If you are training a large text or want to train at the word level instead of the character level, check these boxes.
+If you are training an extremely large text or want to train at the word level instead of the character level, check these boxes.
 
 The Max Vocab setting is only used if you have enabled word level training.
 
