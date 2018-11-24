@@ -57,12 +57,31 @@ Click "Load existing model" and open the directory that contains a trained model
 
 Click "Choose dataset" to locate your dataset. You may continue on your original dataset, or transfer learning by selecting a different dataset to train your model on.
 
+## Layers and bidirectionality
 
-## Word level and Large text mode:
+This tool uses only 128-cell networks, which generally work well for text. Increasing the number of layers may improve training accuracy but may also exponentially increase training time.
+
+The "Bidirectional" option controls whether the recurrent neural network is bidirectional, that is, it processes the previous characters both forward and backward, which works great if text follows specific rules, like Shakespeare’s character headings).
+
+## Line delimited and csv file options
+
+If you are training on a text in which each line is a new entry (a list of ice cream flavors, for instance), check the "Line delimited" box. If your dataset is a csv (comma-separated value) textfile, check the "csv file" box.
+
+## Train size
+
+The "Train size" option determines what proportion of the original text will be used for training. Typically the portion not used for training would be used for validation; however, validation is disabled for this tool.
+
+## Sequence length
+
+The "Maximum sequence length" option determines the maximum number of characters for the network to use to predict the next character, which should be increased to let the network learn longer sequences, or decrease for shorter sequences.
+
+## Word level mode
 
 If you are training an extremely large text or want to train at the word level instead of the character level, check these boxes.
 
-The Max Vocab setting is only used if you have enabled word level training.
+The Max Vocab setting is only used if you have enabled word level training and controls the number of unique words that will be used in sampling.
+
+You are advised to significantly reduce the "Maximum sequence length" if you are doing word level training. 8 is a pretty good value.
 
 ## Buy me a coffee
 

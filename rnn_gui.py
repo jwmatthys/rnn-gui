@@ -15,19 +15,31 @@ class RNNGui:
     __thisNewModel = True
     __thisDatasetPath = None
     __thisWordLevel = BooleanVar()
-    __thisLargeText = BooleanVar()
+    __thisLineDelimited = BooleanVar()
+    __thisBidirectional = BooleanVar()
+    __thisIsCSV = BooleanVar()
 
-    __thisLargeTextCheckbox = Checkbutton(
-        __root, text="Large text", onvalue=True, offvalue=False, variable=__thisLargeText)
+    __thisLineDelimitedCheckbox = Checkbutton(
+        __root, text="Line delimited", onvalue=True, offvalue=False, variable=__thisLineDelimited)
+    __thisIsCSVCheckbox = Checkbutton(
+        __root, text="csv file", onvalue=True, offvalue=False, variable=__thisIsCSV)
     __thisWordLevelCheckbox = Checkbutton(
         __root, text="Word level", onvalue=True, offvalue=False, variable=__thisWordLevel)
+    __thisBidirectionalCheckbox = Checkbutton(
+        __root, text="Bidirectional", onvalue=True, offvalue=False, variable=__thisBidirectional)
+    __thisNumLayersLabel = Label(__root, text="RNN layers")
+    __thisNumLayers = Scale(__root, from_=1, to=4, orient=HORIZONTAL)
+    __thisNumLayers.set(2)
     __thisModelSaveNameLabel = Label(__root, text="Save model as")
     __thisModelSaveName = Entry(__root)
     __thisTrainSizeLabel = Label(__root, text="Train size")
     __thisTrainSize = Scale(__root, from_=0.5, to=1,
                             resolution=0.01, orient=HORIZONTAL)
     __thisTrainSize.set(1.0)
-    __thisLargeTextCheckbox.deselect()
+    __thisMaxTrainLengthLabel = Label(__root, text="Maximum sequence length")
+    __thisMaxTrainLength = Scale(__root, from_=5, to=128, orient=HORIZONTAL)
+    __thisMaxTrainLength.set(40)
+    __thisLineDelimitedCheckbox.select()
     __thisWordLevelCheckbox.deselect()
     __thisEpochLabel = Label(__root, text="Epochs to train")
     __thisNumEpochs = Scale(__root, from_=1, to=10, orient=HORIZONTAL)
@@ -105,26 +117,32 @@ class RNNGui:
         self.__thisNewModelButton.grid(row=2, column=1, padx=(10, 10))
         self.__thisModelSaveNameLabel.grid(row=4)
         self.__thisModelSaveName.grid(row=4, column=1)
-        self.__thisLargeTextCheckbox.grid(row=5)
-        self.__thisWordLevelCheckbox.grid(row=6)
-        self.__thisMaxWordsLabel.grid(row=7)
-        self.__thisMaxWordsEntry.grid(row=7, column=1)
-        self.__thisTrainSizeLabel.grid(row=8)
-        self.__thisTrainSize.grid(row=8, column=1)
-        self.__thisEpochLabel.grid(row=9)
-        self.__thisNumEpochs.grid(row=9, column=1)
-        self.__thisTrainButton.grid(row=10, columnspan=2, pady=(10, 10))
+        self.__thisNumLayersLabel.grid(row=5)
+        self.__thisNumLayers.grid(row=5, column=1)
+        self.__thisLineDelimitedCheckbox.grid(row=6)
+        self.__thisIsCSVCheckbox.grid(row=6, column=1)
+        self.__thisBidirectionalCheckbox.grid(row=7)
+        self.__thisWordLevelCheckbox.grid(row=7,column=1)
+        self.__thisMaxWordsLabel.grid(row=8)
+        self.__thisMaxWordsEntry.grid(row=8, column=1)
+        self.__thisTrainSizeLabel.grid(row=9)
+        self.__thisTrainSize.grid(row=9, column=1)
+        self.__thisMaxTrainLengthLabel.grid(row=10)
+        self.__thisMaxTrainLength.grid(row=10, column=1)
+        self.__thisEpochLabel.grid(row=12)
+        self.__thisNumEpochs.grid(row=12, column=1)
+        self.__thisTrainButton.grid(row=13, columnspan=2, pady=(10, 10))
 
-        self.__thisSamplingLabel.grid(row=11, columnspan=2)
-        self.__thisNumGenLabel.grid(row=12)
-        self.__thisNumGenEntry.grid(row=12, column=1)
-        self.__thisMaxGenLengthLabel.grid(row=13)
-        self.__thisMaxGenLength.grid(row=13, column=1)
-        self.__thisPrefixLabel.grid(row=14)
-        self.__thisPrefixEntry.grid(row=14, column=1)
-        self.__thisTemperatureLabel.grid(row=15)
-        self.__thisTemperature.grid(row=15, column=1)
-        self.__thisGenerateButton.grid(row=16, columnspan=2, pady=(10, 10))
+        self.__thisSamplingLabel.grid(row=14, columnspan=2)
+        self.__thisNumGenLabel.grid(row=15)
+        self.__thisNumGenEntry.grid(row=15, column=1)
+        self.__thisMaxGenLengthLabel.grid(row=16)
+        self.__thisMaxGenLength.grid(row=16, column=1)
+        self.__thisPrefixLabel.grid(row=17)
+        self.__thisPrefixEntry.grid(row=17, column=1)
+        self.__thisTemperatureLabel.grid(row=18)
+        self.__thisTemperature.grid(row=18, column=1)
+        self.__thisGenerateButton.grid(row=19, columnspan=2, pady=(10, 10))
 
     def __setDatasetPath(self):
         self.__thisDatasetPath = askopenfilename(initialdir="data", defaultextension=".txt",
@@ -179,22 +197,30 @@ class RNNGui:
             # TODO: disable training button if no __setDatasetPath
             return
 
-        if self.__thisWordLevel.get() and self.__thisLargeText.get():
+        if self.__thisWordLevel.get() and not self.__thisLineDelimited.get():
             print ('Using word-level mode with large text.')
             self.__thisModel.train_from_largetext_file(self.__thisDatasetPath, num_epochs=self.__thisNumEpochs.get(
-            ), new_model=self.__thisNewModel, word_level=True, max_words=int(self.__thisMaxWordsEntry.get()), train_size=self.__thisTrainSize.get())
+            ), new_model=self.__thisNewModel, word_level=True, max_words=int(self.__thisMaxWordsEntry.get()),
+            train_size=self.__thisTrainSize.get(), rnn_layers=self.__thisNumLayers.get(), is_csv=self.__thisIsCSV.get(),
+            rnn_bidirectional=self.__thisBidirectional.get(), validation=False, max_length=self.__thisMaxTrainLength.get())
         elif self.__thisWordLevel.get():
             print('Using word-level mode.')
             self.__thisModel.train_from_file(self.__thisDatasetPath, num_epochs=self.__thisNumEpochs.get(
-            ), new_model=self.__thisNewModel, word_level=True, max_words=int(self.__thisMaxWordsEntry.get()), train_size=self.__thisTrainSize.get())
-        elif self.__thisLargeText.get():
+            ), new_model=self.__thisNewModel, word_level=True, max_words=int(self.__thisMaxWordsEntry.get()),
+            train_size=self.__thisTrainSize.get(), rnn_layers=self.__thisNumLayers.get(), is_csv=self.__thisIsCSV.get(),
+            rnn_bidirectional=self.__thisBidirectional.get(), validation=False, max_length=self.__thisMaxTrainLength.get())
+        elif not self.__thisLineDelimited.get():
             print('Using large text mode.')
             self.__thisModel.train_from_largetext_file(
-                self.__thisDatasetPath, num_epochs=self.__thisNumEpochs.get(), new_model=self.__thisNewModel, train_size=self.__thisTrainSize.get())
+                self.__thisDatasetPath, num_epochs=self.__thisNumEpochs.get(), new_model=self.__thisNewModel,
+                train_size=self.__thisTrainSize.get(), rnn_layers=self.__thisNumLayers.get(), is_csv=self.__thisIsCSV.get(),
+                rnn_bidirectional=self.__thisBidirectional.get(), validation=False, max_length=self.__thisMaxTrainLength.get())
         else:
             print('Beginning training.')
             self.__thisModel.train_from_file(
-                self.__thisDatasetPath, num_epochs=self.__thisNumEpochs.get(), new_model=self.__thisNewModel, train_size=self.__thisTrainSize.get())
+                self.__thisDatasetPath, num_epochs=self.__thisNumEpochs.get(), new_model=self.__thisNewModel,
+                train_size=self.__thisTrainSize.get(), rnn_layers=self.__thisNumLayers.get(), is_csv=self.__thisIsCSV.get(),
+                rnn_bidirectional=self.__thisBidirectional.get(), validation=False, max_length=self.__thisMaxTrainLength.get())
         for f in files:
             shutil.copy(f, save_dir)
         self.__thisGenerateButton.config(state=NORMAL)
@@ -223,5 +249,5 @@ class RNNGui:
 
 
 # Run main application
-rnngui = RNNGui(width=360, height=570)
+rnngui = RNNGui(width=360, height=680)
 rnngui.run()
