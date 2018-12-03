@@ -109,6 +109,8 @@ class RNNGui:
         self.__thisTrainButton.config(state=DISABLED)
         self.__thisGenerateButton = Button(
             self.__root, text="Generate", bg="pink", command=self.__goGenerate, state=DISABLED)
+        self.__thisGenToFileButton = Button(
+            self.__root, text="Gen to file", bg="pink", command=self.__goGenToFile, state=DISABLED)
 
         # To make the textarea auto resizable
         self.__thisTrainingLabel.grid(row=0, columnspan=2)
@@ -142,7 +144,8 @@ class RNNGui:
         self.__thisPrefixEntry.grid(row=17, column=1)
         self.__thisTemperatureLabel.grid(row=18)
         self.__thisTemperature.grid(row=18, column=1)
-        self.__thisGenerateButton.grid(row=19, columnspan=2, pady=(10, 10))
+        self.__thisGenerateButton.grid(row=19, pady=(10, 10))
+        self.__thisGenToFileButton.grid(row=19, column=1, pady=(10, 10))
 
     def __setDatasetPath(self):
         self.__thisDatasetPath = askopenfilename(initialdir="data", defaultextension=".txt",
@@ -175,6 +178,7 @@ class RNNGui:
             self.__thisModel = textgenrnn(
                 weights_path=weights_loc, vocab_path=vocab_loc, config_path=config_loc)
             self.__thisGenerateButton.config(state=NORMAL)
+            self.__thisGenToFileButton.config(state=NORMAL)
 
     def __newModel(self):
         self.__thisNewModel = True
@@ -234,6 +238,17 @@ class RNNGui:
                    (self.__thisNumGenEntry.get(), self.__thisModelSaveName.get(), self.__thisTemperature.get()))
             self.__thisModel.generate(n=int(self.__thisNumGenEntry.get()), temperature=self.__thisTemperature.get(
             ), prefix=self.__thisPrefixEntry.get(), max_gen_length=int(self.__thisMaxGenLength.get()))
+            print ("***\n")
+
+    def __goGenToFile(self):
+
+        if self.__thisModel:
+            genFile = "sampled_"+self.__thisModelSaveName.get()+".txt"
+            output = os.path.join('output', genFile)
+            print ("\n*************************\n*** Generating %s samples to file %s\n*** Model: \'%s\'\n*** Temperature %0.2f\n*************************\n" %
+                   (genFile, self.__thisNumGenEntry.get(), self.__thisModelSaveName.get(), self.__thisTemperature.get()))
+            self.__thisModel.generate_to_file(n=int(self.__thisNumGenEntry.get()), temperature=self.__thisTemperature.get(
+            ), prefix=self.__thisPrefixEntry.get(), max_gen_length=int(self.__thisMaxGenLength.get()), destination_path=output)
             print ("***\n")
 
     def __quitApplication(self):
